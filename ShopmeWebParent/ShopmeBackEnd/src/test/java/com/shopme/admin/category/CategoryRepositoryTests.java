@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 
 import com.shopme.common.entity.Category;
@@ -29,7 +30,7 @@ public class CategoryRepositoryTests {
 		assertThat(savedCategory.getId()).isGreaterThan(0);
 	}
 	
-	@Test
+	//@Test
 	public void testCreateSubCategory() {
 		Category parent = new Category(7);
 		Category subCategory = new Category("iPhone", parent);
@@ -40,7 +41,7 @@ public class CategoryRepositoryTests {
 		
 	}
 	
-	@Test
+	//@Test
 	public void testGetCategory() {
 		Category category = repo.findById(2).get();
 		System.out.println(category.getName());
@@ -55,7 +56,7 @@ public class CategoryRepositoryTests {
 	
 	}
 	
-	@Test
+	//@Test
 	public void testPrintHierachicalCategories() {
 		Iterable<Category>categories = repo.findAll();
 		
@@ -85,10 +86,28 @@ public class CategoryRepositoryTests {
 		}
 	}
 	
-	@Test
+	//@Test
 	public void testListRootCategories() {
-		List<Category> rootCategories = repo.findRootCategories();
+		List<Category> rootCategories = repo.findRootCategories(Sort.by("name").ascending());
 		rootCategories.forEach(cat -> System.out.println(cat.getName()));
+	}
+	
+	@Test
+	public void testFindByName() {
+		String name = "Computers";
+		Category category = repo.findByName(name);
+		
+		assertThat(category).isNotNull();
+		assertThat(category.getName()).isEqualTo(name);
+	}
+	
+	@Test
+	public void testFindByAlias() {
+		String alias = "electronics";
+		Category category = repo.findByAlias(alias);
+		
+		assertThat(category).isNotNull();
+		assertThat(category.getAlias()).isEqualTo(alias);
 	}
 	
 

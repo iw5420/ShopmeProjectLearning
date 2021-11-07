@@ -20,7 +20,7 @@ import com.shopme.common.entity.User;
 public class UserPdfExporter extends AbstractExporter{
 
 	public void export(List<User> listUsers, HttpServletResponse response) throws IOException {
-		this.setResponseHeader(response, "application/pdf", ".pdf");
+		this.setResponseHeader(response, "application/pdf", ".pdf", "users_");
 		
 		Document document = new Document(PageSize.A4);
 		PdfWriter.getInstance(document, response.getOutputStream());

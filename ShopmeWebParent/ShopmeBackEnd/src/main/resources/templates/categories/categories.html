@@ -14,60 +14,83 @@
 	[[${message}]]
 	</div>
 	
-	<div>
-		<form th:action="@{/categories/page/1}" class="form-inline m-3">
-			
-			Filter:&nbsp;
-			<input type="search" name="keyword" th:value="${keyword}" class="form-control" required/>
-			&nbsp;&nbsp;
-			<button type="submit" class="btn btn-primary">
-				<i class="fas fa-search"></i>
-			</button>
-			&nbsp;&nbsp;
-			<button type="button" class="btn btn-secondary" onclick="clearFilter()">
-				<i class="fas fa-eraser"></i>
-			</button>
-		</form>
-	</div>
+	<div th:replace="fragments :: search_form_and_message" />
 	
+
 	<div class="full-details">
 		<table class="table table-bordered table-striped table-hover table-responsive-xl">
 			<thead class="thead-dark">
 				<tr>
 					<th>ID</th>
 					<th>Category Image</th>
-					<th>Category Name</th>
-					<th>Alias</th>
-					<th>Enabled</th>				
+					<th th:replace="fragments :: column_link('name', 'Category Name', 'none')" />	
+					<th class="hideable-column">Alias</th>
+					<th>Enabled</th>
 					<th></th>
-				</tr>
+				</tr>								
 			</thead>
 			<tbody>
-				<tr th:each="cat : ${listcategories}">
-				<td>[[${cat.id}]]</td>
-				<td>
-					<img th:src="@{${cat.imagePath}}" style="width:100px" class = "img-fluid"/>					
-				</td>
-				<td>[[${cat.name}]]</td>
-				<td>[[${cat.alias}]]</td>
-				<td>
-					<div th:replace="fragments :: category_status"></div>
-				</td>
-				<td>
-					<div th:replace="fragments :: category_actions"></div>
-				</td>
+				<tr th:each="cat : ${listCategories}">
+					<td>[[${cat.id}]]</td>
+					<td>
+					    <span th:if="${cat.imagePath == null}" class="fas fa-folder fa-3x icon-silver"></span>					
+						<img th:if="${cat.imagePath != null}" th:src="@{${cat.imagePath}}" style="width: 100px" class="img-fluid"/>
+					</td>
+					<td>[[${cat.name}]]</td>
+					<td class="hideable-column">[[${cat.alias}]]</td>
+					<td>
+						<div th:replace="fragments :: status(${cat.enabled}, 'category', '/categories/' + ${cat.id})" />
+					</td>
+					<td>
+						<div th:replace="fragments :: edit('category', '/categories/edit/' + ${cat.id})" />
+						&nbsp; 
+						<div th:replace="fragments :: delete('category', ${cat.id}, '/categories/delete/' + ${cat.id}, ${!cat.hasChildren})" />	
+					</td>					
 				</tr>
 			</tbody>
 		</table>
 	</div>
-		
+	
+	<div class="less-details">
+		<div th:each="cat : ${listCategories}" class="row m-1">
+			<div class="col-4">
+				<img th:src="@{${cat.imagePath}}" style="width: 100px" class="img-fluid"/>			
+			</div>
+			<div class="col-8">
+				<div>[[${cat.name}]]</div>
+				<div class="mt-2">
+					<div th:replace="fragments :: status(${cat.enabled}, 'category', '/categories/' + ${cat.id})" />
+					&nbsp; 			
+					<div th:replace="fragments :: edit('category', '/categories/edit/' + ${cat.id})" />
+					&nbsp;
+					<div th:replace="fragments :: delete('category', ${cat.id}, '/categories/delete/' + ${cat.id}, ${!cat.hasChildren})" />
+				</div>
+			</div>
+			<div>&nbsp;</div>
+		</div>	
+	</div>
+	
+	<div th:if="${keyword !=null}" class="text-center">
+		<span>Search result does not show categories in hierarchical form</span>
+		<div th:replace="fragments :: pagination('/categories', 'categories')"></div>
+	</div>
+	<div th:unless="${keyword !=null}" >
+		<div th:replace="fragments :: pagination('/categories', 'top-level categories')"></div>
+	</div>
+	<div th:replace="modal_fragments :: confirm_modal" />
+	
 	<div th:replace="fragments :: footer"></div>
 </div>
+<script th:src="@{/js/common_list.js}"></script>
 <script type="text/javascript">
-	
-	function clearFilter(){
-		window.location = "[[@{/categories}]]";
-	}
+	moduleURL = "[[@{/categories}]]";
+	$(document).ready(function(){
+		$(".link-delete").on("click", function(e){
+			e.preventDefault();
+			showDeleteConfirmModal($(this), 'category');
+		});
+		
+	});
 </script>
 </body>
 </html>

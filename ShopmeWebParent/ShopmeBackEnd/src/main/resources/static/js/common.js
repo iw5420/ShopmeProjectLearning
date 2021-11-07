@@ -20,3 +20,18 @@ function customizeDropDownMenu(){
 	location.href = this.href;
 	});
 }
+
+	
+function showModalDoialog(title, message){
+	$("#modalTitle").text(title);
+	$("#modalBody").text(message);
+	$("#modalDialog").modal();
+}
+
+function showErrorModal(message){
+	showModalDoialog("Error", message);
+}
+
+function showWarningModal(message){
+	showModalDoialog("Warning", message);
+}
