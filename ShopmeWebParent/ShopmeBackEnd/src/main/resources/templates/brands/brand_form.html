@@ -9,7 +9,7 @@
 	</div>
 
 	<form th:action="@{/brands/save}" method="post" style="max-width: 500px; margin: 0 auto"
-		enctype="multipart/form-data" 
+		enctype="multipart/form-data" onsubmit="return checkUnique(this)"
 		th:object="${brand}">
 		<input type="hidden" th:field="*{id}" />
 	<div class="border border-secondary rounded p-3">
@@ -124,7 +124,7 @@
 
 		return false;
 	}
-	
+		
 </script>
 <script th:src="@{/js/common_form.js}"></script>
 </body>
